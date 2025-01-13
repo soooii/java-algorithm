@@ -7,20 +7,19 @@ public class Main{
         int con = n;
         int max_con = 0;
         while(con>0){
-            String s = Integer.toString(con);
-            String[] ss = s.split("");
             int sum = 0;
-            for(String s1 : ss){
-                int s2 = Integer.parseInt(s1);
-                sum += s2;
+            int temp = con;
+            while(temp>0){ // temp가 0이면 종료
+                sum += temp%10;
+                temp = temp/10;
             }
             if((sum+con) == n){
                 max_con = con;
             }
             con--;
         }
-        
+
         System.out.println(max_con);
-        
+
     }
 }
