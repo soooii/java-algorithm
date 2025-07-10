@@ -3,34 +3,26 @@ import java.util.*;
 public class Main{
     public static void main(String[] args){
         Scanner sc = new Scanner(System.in);
-        String s = sc.next();
-        String[] ss = s.split("");
-
-        Map<String,Integer> map = new HashMap<>();
-        for(String s1 :ss){
-            String key = s1.toUpperCase();
-            if(map.get(key) == null){
-                map.put(key,1);
-            }else{
-                int origin = map.get(key);
-                map.replace(key, origin+1);
+        String s = sc.next().toUpperCase();
+        // 알파벳은 26개, 각 알파벳 등장 횟수 저장 위한 배열
+        int[] count = new int[26];
+        for(int i=0;i<s.length();i++){
+            int num = s.charAt(i)-'A'; // index A는 0부터
+            count[num]++;
+        }
+        int max = 0;
+        char answer = '?';
+        for(int i=0;i<count.length;i++){
+            if(max<count[i]){
+                max = count[i];
+                answer=(char)('A'+i); // 문자 -> 알파벳
+            }else if (max==count[i]){
+                answer= '?';
             }
         }
-        List<String> keys = new ArrayList<>(map.keySet());
-        if(keys.size()==1){
-            System.out.println(keys.get(0));
-        } else {
-            Collections.sort(keys, (v1, v2) -> (
-                    map.get(v2).compareTo(map.get(v1))
-            ));
-            String first = keys.get(0);
-            String second = keys.get(1);
+        System.out.println(answer);
 
-            if ((int)map.get(first) == (int)map.get(second)) {
-                System.out.println("?");
-            } else {
-                System.out.println(first);
-            }
-        }
     }
+
+
 }
