@@ -1,4 +1,5 @@
 import java.io.*;
+
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -12,18 +13,18 @@ public class Main {
         String[] len = br.readLine().split(" "); // 도시 간 거리
         String[] price = br.readLine().split(" "); // 리터당 가격
 
-        int minPrice = Integer.parseInt(price[0]);
-        int total=0;
-        // 맨 왼쪽 도시는 무조건 기름 넣어야함..
+        long minPrice = Integer.parseInt(price[0]);
+        long total=0;
+        // 맨 왼쪽 도시는 무조건 기름 넣어야함
         for(int i = 0; i < n-1; i++){
-            if(Integer.parseInt(price[i])<minPrice){
-                minPrice = Integer.parseInt(price[i]);
+            if(Long.parseLong(price[i])<minPrice){
+                minPrice = Long.parseLong(price[i]);
             }
-            
-            total += minPrice*Integer.parseInt(len[i]);
+
+            total += minPrice*Long.parseLong(len[i]);
         }
 
         System.out.println(total);
-        
+
     }
 }
