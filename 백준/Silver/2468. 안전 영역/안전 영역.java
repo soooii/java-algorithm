@@ -1,71 +1,74 @@
 import java.io.*;
-
+import java.util.*;
 
 public class Main{
-    static int n;
-    static int[][] arr;
+
+    static int N;
+    static int[][] map;
     static boolean[][] visited;
-    static int[] dx = { -1, 0, 0, 1};
-    static int[] dy = { 0, -1, 1, 0};
-
-    public static void main(String[] args) throws IOException {
+    static int max;
+    static int[] dx = {-1,1,0,0};
+    static int[] dy = {0,0,-1,1};
+    static int count;
+    static int answer;
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        n = Integer.parseInt(br.readLine());
-        arr = new int[n][n];
-        visited = new boolean[n][n];
-        // n*n
-        // 물에 잠기지 않는 k를 for문으로 -> 최대 구하기
-        for(int i = 0; i < n; i++) {
-            String s = br.readLine();
-            String[] split = s.split(" ");
+        N = Integer.parseInt(br.readLine());
+        map = new int[N][N];
 
-            for(int j=0;j<n;j++) {
-                arr[i][j] = Integer.parseInt(split[j]);
+
+        for(int i=0;i<N;i++){
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for(int j=0;j<N;j++){
+                map[i][j] = Integer.parseInt(st.nextToken());
+                if(max < map[i][j]) max = map[i][j];
             }
         }
 
-        int maxCount=-1;
-        int count = 0;
-        for(int i=0;i<=100;i++) {
-            //i는 limit
-            count=0;
-            for (int j = 0; j < n; j++) {
-                for (int k = 0; k < n; k++) {
-                    visited[j][k] = false;
-                }
-            }
 
-            for(int j=0;j<n;j++) {
-                for(int k=0;k<n;k++) {
-                    if(arr[j][k]>i && !visited[j][k]) {
-                        dfs(j,k,i); // 해당 dfs 탐색이 끝나야 이어진 영역의 탐색은 다 끝난 것 
+        count=0;
+        answer=0;
+
+        if (max == 0) {
+            System.out.println(1);
+            return;
+        }
+
+        for(int k=0;k<=max;k++){
+            visited = new boolean[N][N];
+            count = 0; // k마다 초기화
+
+            for(int i=0;i<N;i++){
+                for(int j=0;j<N;j++) {
+                    if (map[i][j] > k && !visited[i][j]) {
+                        dfs(i, j, k);
                         count++;
                     }
                 }
             }
-            if(maxCount<count) {
-                maxCount = count;
-            }
+            answer = Math.max(answer, count);
         }
 
-        System.out.println(maxCount);
-
-        }
+        System.out.println(answer);
 
 
-    public static void dfs(int y, int x, int limit){
-        visited[y][x] = true;
 
-        for(int i=0; i<4; i++){
-            int mx = x + dx[i];
-            int my = y + dy[i];
 
-            if(mx >= 0 && mx < n && my >= 0 && my < n){ // 범위
-                if(!visited[my][mx] && arr[my][mx]>limit){
-                    dfs(my,mx, limit);
-                }
-            }
-        }
+
     }
 
+    static void dfs(int x, int y, int k){
+        visited[x][y] = true;
+
+        for(int i=0;i<4;i++){
+            int nextX = x+dx[i];
+            int nextY = y+dy[i];
+
+            if(nextX<0 || nextX>=N || nextY<0 || nextY>=N) continue;
+            if(map[nextX][nextY]<=k || visited[nextX][nextY]) continue;
+
+            dfs(nextX,nextY, k);
+
+        }
+    }
 }
