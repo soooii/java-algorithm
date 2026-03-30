@@ -1,47 +1,38 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.*;
 
 public class Main {
+    
     public static void main(String[] args) throws IOException {
-        //5kg 이용
-        //3kg..
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String line = reader.readLine();
-        int n = Integer.parseInt(line);
-        int answer = -1;
-        boolean findanswer =false;
-        //5의 횟수를 줄여가야하는데..
-        if(n%5==0){
-            answer = n/5;
-        }
-        else{
-            int firstn = n;
-            
-            for(int i = n/5; i>=1;i--){
-                n =firstn;
-                n = n - i*5;
-                if(n%3 == 0){
-                    answer = i + n/3;
-                    findanswer = true;
-                    break;
-                }
-            }
-            
-            if(findanswer == false){
-                n = firstn;
-                if(n%3 ==0){
-                    answer = n/3;
-                }
-                else{
-                    answer = -1;
-                }
-            
-            }
-           
-        }
-        System.out.println(answer);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int N = Integer.parseInt(br.readLine());
+        //3kg, 5kg, 최대한 적은 봉지
         
+        int[] dp = new int[N+1];
         
+        for (int i = 0; i <= N; i++) {
+            dp[i] = 10001;
+        }
+        
+        dp[0]=0;
+        
+        for(int i=1;i<=N;i++){
+            if(i>=3){
+                dp[i]=Math.min(dp[i],dp[i-3]+1);
+            }
+            if(i>=5){
+                dp[i]=Math.min(dp[i],dp[i-5]+1);
+            }
+        }
+        
+        if (dp[N] == 10001) {
+            System.out.println(-1);
+        } else {
+            System.out.println(dp[N]);
+        }
+          
+        
+     
     }
 }
