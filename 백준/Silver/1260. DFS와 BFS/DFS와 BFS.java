@@ -1,85 +1,89 @@
 import java.io.*;
 import java.util.*;
 
-public class Main{
+public class Main {
 
-    static int n;
-    static int m;
-    static int v;
-    static int[][] arr;
-    static boolean[] visited; // Java에서 boolean 배열의 기본 초기값은 false
-    static StringBuilder sbdfs = new StringBuilder();
-    static StringBuilder sbbfs = new StringBuilder();
+	static int M,N,V;
+	static int[][] map;
+;
+	static boolean[] visitedDfs;
+	static boolean[] visitedBfs;
+	static List<Integer> Dfs=new ArrayList<>();
+	static List<Integer> Bfs=new ArrayList<>();
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String p = br.readLine();
-        String[] pp = p.split(" ");
-        n = Integer.parseInt(pp[0]); // 정점 개수
-        m = Integer.parseInt(pp[1]); // 간선 개수
-        v = Integer.parseInt(pp[2]); // 탐색 시작할 정점 번호
+		StringTokenizer st = new StringTokenizer(br.readLine());
 
-        // 방문할 수 있는 정점이 여러 개인 경우 정점 번호가 작은 것부터 방문
-        // 더 이상 방문할 수 있는 점 없는 경우 종료
-        // 정점번호 1~N
-        arr = new int[n+1][n+1]; // 정점
+		N = Integer.parseInt(st.nextToken()); //정점
+		M = Integer.parseInt(st.nextToken()); //간선
+		V = Integer.parseInt(st.nextToken()); //시작 정점
 
-        for(int i=0;i<m;i++){
-            String m1 = br.readLine();
-            String[] m2 = m1.split(" ");
+		map=new int[N+1][N+1];
+		visitedDfs=new boolean[N+1];
+		visitedBfs=new boolean[N+1];
 
-            // 간선이 연결하는 두 정점 번호
-            int x = Integer.parseInt(m2[0]);
-            int y = Integer.parseInt(m2[1]);
+		for(int i=0;i<M;i++) {
+			StringTokenizer str = new StringTokenizer(br.readLine());
+			int a =Integer.parseInt(str.nextToken());
+			int b = Integer.parseInt(str.nextToken());
 
-            // 1,2면 1->2, 2->1로 갈 수 있으니...
-            arr[x][y] = arr[y][x] = 1; // 연결되어있다 의미
-        }
+			map[a][b]=map[b][a]=1;
+		}
 
-        visited = new boolean[n+1];
-        dfs(v);
+		dfs(V);
 
-        visited = new boolean[n + 1];
-        bfs(v);
+		StringBuilder st1= new StringBuilder();
+		for(int num:Dfs){
+			st1.append(num+" ");
+		}
 
-        System.out.println(sbdfs);
-        System.out.println(sbbfs);
+		System.out.println(st1);
 
-    }
+		bfs(V);
 
-    // 재귀함수 이용
-    public static void dfs(int start){
-        visited[start] = true;
-        sbdfs.append(start).append(" ");
-        for(int node=1; node<=n; node++){
-            // 연결된 노드 방문하지 않았으면
-            if(arr[start][node]==1 && visited[node]==false){
-                dfs(node); // 연결된 노드부터 다시 탐색
-            }
-        }
-    }
+		StringBuilder st2= new StringBuilder();
+		for(int num:Bfs){
+			st2.append(num+" ");
+		}
 
-    // 큐 -> linkedList로 구현 / 선입선출, 줄기다리기
-    public static void bfs(int start){
-        Queue<Integer> queue = new LinkedList<Integer>();
-        queue.add(start);
-        visited[start]=true;
-        sbbfs.append(start).append(" ");
-        // 연결된 노드부터 탐색하는 DFS와 다르게
-        // 방문하지 않은 노드는 큐에 넣어주고
-        // poll을 통해 작은 정점 번호부터 탐색 시작
-        // 큐에 정점이 없을 때까지
-        while(!queue.isEmpty()){
-            int temp = queue.poll(); // 큐에서 가장 앞 담겨져있는 번호
-            for(int node=1; node<=n;node++){
-                // 연결된 노드 방문하지 않았으면
-                if(arr[temp][node]==1 && visited[node]==false){
-                    queue.add(node); // 큐에 넣어줘 줄 서게 함
-                    visited[node] = true;
-                    sbbfs.append(node).append(" ");
-                }
-            }
-        }
-    }
+		System.out.println(st2);
+
+
+
+
+	}
+
+	static void dfs(int start){
+		visitedDfs[start]=true;
+		Dfs.add(start);
+		for(int i=1;i<=N;i++){
+			if(map[start][i]==1 && !visitedDfs[i]){
+				dfs(i);
+			}
+		}
+	}
+
+	static int bfs(int start) {
+		Queue<Integer> q = new LinkedList<>();
+
+		q.offer(start);
+		Bfs.add(start);
+		visitedBfs[start]=true;
+
+		while (!q.isEmpty()) {
+			int cur = q.poll();
+
+			for(int i=1;i<=N;i++){
+				if(map[cur][i]==1 && !visitedBfs[i]){
+					visitedBfs[i]= true;
+					Bfs.add(i);
+					q.add(i);
+				}
+			}
+		}
+
+		return -1;
+	}
 
 }
