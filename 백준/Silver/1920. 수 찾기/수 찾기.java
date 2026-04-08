@@ -1,52 +1,55 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	public static void main(String[] args) throws IOException {
 
-        int n = Integer.parseInt(br.readLine()); 
-        String[] s1 = br.readLine().split(" ");
-        int[] num = new int[n];
-        for(int i=0;i<n;i++){
-            num[i] = Integer.parseInt(s1[i]);
-        }
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int m = Integer.parseInt(br.readLine()); 
-        String[] s2 = br.readLine().split(" ");
-        int[] num2 = new int[m];
-        Map<Integer,Integer> map = new HashMap<>();
+		int N = Integer.parseInt(br.readLine());
+		int[] A = new int[N];
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		for (int i = 0; i < N; i++) {
+			A[i] = Integer.parseInt(st.nextToken());
+		}
 
-        for(int i=0;i<m;i++){
-            num2[i] = Integer.parseInt(s2[i]);
-            map.put(num2[i],0);
-        }
+		Arrays.sort(A);
 
-        // 이분탐색 : 존재 여부만 판단, break
-        Arrays.sort(num);
+		int M = Integer.parseInt(br.readLine());
+		StringTokenizer str = new StringTokenizer(br.readLine());
+		int num;
 
-        for(int i=0;i<m;i++){
-            int left = 0;
-            int right = num.length;
-            while(left<right){
-                int mid = (left+right)/2;
-                if(num[mid]>num2[i]){
-                    right = mid;
-                }
-                else if (num2[i] == num[mid]){
-                    map.put(num2[i],1);
-                    break;
-                }
-                else {
-                    left = mid+1;
-                }
+		StringBuilder sb =new StringBuilder();
+		for (int i = 0; i < M; i++) {
+			num = Integer.parseInt(str.nextToken());
+			boolean what = binarySearch(A,num);
+			if(what){
+				sb.append(1).append("\n");
+			}else{
+				sb.append(0).append("\n");
+			}
+		}
 
-            }
-        }
+		System.out.println(sb);
 
-        for(int i=0;i<m;i++){
-            System.out.println(map.get(num2[i]));
-        }
+	}
 
-    }
+	static boolean binarySearch(int[] A, int target){
+		int left=0;
+		int right=A.length-1;
+
+		while (left<=right){
+			int mid =(left+right)/2;
+
+			if(A[mid]==target){
+				return true;
+			}else if(A[mid]<target){
+				left=mid+1;
+			}else{
+				right=mid-1;
+			}
+		}
+
+		return false;
+	}
 }
