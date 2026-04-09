@@ -15,25 +15,15 @@ public class Main {
 			A[i] = Integer.parseInt(br.readLine());
 		}
 
-		int[] dp = new int[K+1];
-		for(int i=0;i<=K;i++){
-			dp[i]=K+1;
-		}
+		int count=0;
 
-		dp[0]=0;
-
-		for(int i=0;i<=K;i++){
-			for(int j=1;j<=N;j++){
-				if(i>=A[j]){
-					dp[i]=Math.min(dp[i],dp[i-A[j]]+1);
-				}
+		for(int i=N;i>0;i--){
+			if(K>=A[i]){
+				count += K/A[i];
+				K %= A[i];
 			}
 		}
 
-		if (dp[K] == K+1) {
-			System.out.println(-1);
-		} else {
-			System.out.println(dp[K]);
-		}
+		System.out.println(count);
 	}
 }
