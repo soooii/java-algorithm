@@ -1,68 +1,49 @@
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int n = Integer.parseInt(br.readLine());
-        String[] s1 = br.readLine().split(" ");
-        int[] num = new int[n];
-        for(int i=0;i<n;i++){
-            num[i] = Integer.parseInt(s1[i]);
-        }
+	static int N,M;
+	static int[] user1;;
+	static int[] num;
+	public static void main(String[] args) throws IOException {
 
-        int m = Integer.parseInt(br.readLine());
-        String[] s2 = br.readLine().split(" ");
-        int[] num2 = new int[m];
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
 
-        for(int i=0;i<m;i++){
-            num2[i] = Integer.parseInt(s2[i]);
-        }
+		N=Integer.parseInt(st.nextToken()); // 상근
 
-        // 이분탐색 : 중복 포함, 몇개 갖고있는지 개수 count, 상한선-하한선
-        Arrays.sort(num);
-        int result;
-        StringBuilder sb = new StringBuilder();
-        for(int i=0;i<m;i++){
-            result=upperBound(num,num2[i])-lowerBound(num,num2[i]);
-            sb.append(result+" ");
-        }
-        System.out.println(sb);
+		Map<Integer,Integer> map = new HashMap<>();
+		user1=new int[N];
 
-    }
 
-    public static int lowerBound(int[] arr, int key){
-        int lo=0;
-        int hi=arr.length;
+		StringTokenizer str = new StringTokenizer(br.readLine());
+		for(int i=0;i<N;i++){
+			user1[i] = Integer.parseInt(str.nextToken());
+			if(!map.containsKey(user1[i])){
+				map.put(user1[i],1);
+			}
+			else{
+				int count = map.get(user1[i]);
+				map.put(user1[i],count+1);
+			}
+		}
 
-        while(lo<hi){
-            int mid = (lo+hi)/2;
+		M = Integer.parseInt(br.readLine());
+		num=new int[M];
+		StringTokenizer strr = new StringTokenizer(br.readLine());
+		StringBuilder sb = new StringBuilder();
+		for(int i=0;i<M;i++){
+			num[i] = Integer.parseInt(strr.nextToken());
+			if(map.containsKey(num[i])){
+				sb.append(map.get(num[i])).append(" ");
+			}
+			else{
+				sb.append(0).append(" ");
+			}
+		}
 
-            if(key<=arr[mid]){
-                hi=mid;
-            }
-            else{
-                lo=mid+1;
-            }
-        }
+		System.out.println(sb);
 
-        return lo;
-    }
-
-    public static int upperBound(int[] arr, int key){
-        int lo=0;
-        int hi=arr.length;
-        while(lo<hi){
-            int mid = (lo+hi)/2;
-            if(key<arr[mid]){
-                hi=mid;
-            }
-            else {
-                lo=mid+1;
-            }
-        }
-
-        return lo;
-    }
+	}
 }
