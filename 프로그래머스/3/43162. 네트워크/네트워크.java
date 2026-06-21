@@ -1,27 +1,27 @@
 import java.util.*;
 class Solution {
     boolean[] visited;
-    
     int N;
     public int solution(int n, int[][] computers) {
-        visited = new boolean[n];
+        visited=new boolean[n];
         N=n;
-        List<Integer> result = new ArrayList<>();
+        int count=0;;
         for(int i=0;i<n;i++){
-            if(!visited[i]) {
-                dfs(i, computers);
-                result.add(1); 
-            }
+           if(!visited[i]){
+               dfs(i,computers);
+               count++;
+           }
         }
         
-        return result.size();
+        return count;
     }
     
-    public void dfs(int com, int[][] computers){
-        visited[com]=true;
-        for(int i=0;i<N;i++){
-            if(com !=i && computers[com][i]==1 && !visited[i]){
-                dfs(i,computers);
+    void dfs(int i,int[][] computers){
+        visited[i]=true;
+        
+        for(int j=0;j<N;j++){
+            if(i != j && computers[i][j]==1 && !visited[j]){
+                dfs(j,computers);
             }
         }
     }
