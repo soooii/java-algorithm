@@ -2,18 +2,14 @@ import java.io.*;
 import java.util.*;
 class Solution {
     public String solution(String s) {
-        int len = s.length();
-        String answer;
+        int l = s.length();
+        int i = l%2;
+        int k = l/2;
         StringBuilder sb = new StringBuilder();
-        if(len%2==0){ // 짝수
-            sb.append(s.charAt(len/2-1));
-            sb.append(s.charAt(len/2-1+1));
-            answer=sb.toString();  
+        if(i==0){
+            return sb.append(s.charAt(k-1)).append(s.charAt(k)).toString();
+        }else{
+            return sb.append(s.charAt(k)).toString();
         }
-        else{
-            sb.append(s.charAt(len/2+1-1));
-            answer=sb.toString();
-        }
-        return answer;
     }
 }
