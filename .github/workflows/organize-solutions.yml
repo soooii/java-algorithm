@@ -1,0 +1,65 @@
+name: Organize Solutions
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "Java/_inbox/**"
+      - "MySQL/_inbox/**"
+      - "Oracle/_inbox/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  organize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Organize inbox
+        run: python scripts/organize_inbox.py
+
+      - name: Check changes
+        id: changes
+        shell: bash
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+          git status --short
+
+      - name: Configure Git
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit changes
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git add -A
+          git commit -m "chore: 신규 풀이 유형별 자동 분류"
+
+      - name: Pull latest
+        if: steps.changes.outputs.has_changes == 'true'
+        run: git pull --rebase origin "${GITHUB_REF_NAME}"
+
+      - name: Push changes
+        if: steps.changes.outputs.has_changes == 'true'
+        run: git push origin "HEAD:${GITHUB_REF_NAME}"
