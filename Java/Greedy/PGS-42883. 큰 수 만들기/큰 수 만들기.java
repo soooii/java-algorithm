@@ -1,20 +1,25 @@
+import java.util.*;
 class Solution {
     public String solution(String number, int k) {
         int len = number.length();
-        StringBuilder sb = new StringBuilder();
-     
-        for (int i = 0; i < len; i++) {
-            char current = number.charAt(i);
-            
-            while (sb.length() > 0 && sb.charAt(sb.length() - 1) < current && k > 0) {
-                sb.deleteCharAt(sb.length() - 1);
+        Stack<Character> stack = new Stack<>();
+        
+        for(int i=0;i<len;i++){
+            char c = number.charAt(i);
+            while(!stack.isEmpty() && stack.peek()<c && k>0){
+                stack.pop();
                 k--;
             }
             
-            sb.append(current);
+            stack.push(c);
         }
         
-        // 이미 내림차순이라 k가 남았다면 남은 개수만큼 뒤 자르기
-        return sb.substring(0, sb.length() - k);
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<stack.size()-k;i++){
+            sb.append(stack.get(i));
+        }
+        
+        return sb.toString();
+        
     }
 }

@@ -157,10 +157,14 @@ def handle_problem(root: Path, language: str, problem_dir: Path) -> dict[str, ob
 
     if target.exists():
         if fingerprint(problem_dir) == fingerprint(target):
-            print("[SKIP] 동일한 대상 폴더가 이미 존재합니다.")
+            print("[SKIP] 동일한 대상 폴더가 이미 존재해 inbox 항목을 삭제합니다.")
+            shutil.rmtree(problem_dir)
+            cleanup_empty_parents(problem_dir.parent, stop_at=root / language)
             return {"status": "skipped", "category": category, "warnings": warnings}
-        print("[WARN] 대상 경로가 이미 존재하며 내용이 다릅니다.")
-        return {"status": "conflict", "category": category, "warnings": warnings}
+        print("[WARN] 대상 경로가 이미 존재해 기존 풀이를 최신 inbox 풀이로 교체합니다.")
+        replace_directory(root, target, problem_dir)
+        cleanup_empty_parents(problem_dir.parent, stop_at=root / language)
+        return {"status": "moved", "category": category, "warnings": warnings}
 
     target.parent.mkdir(parents=True, exist_ok=True)
     if not try_git_mv(root, problem_dir, target):
@@ -242,6 +246,17 @@ def cleanup_empty_inbox(root: Path, language: str) -> None:
         inbox.rmdir()
 
 
+def replace_directory(root: Path, target: Path, source: Path) -> None:
+    """Replace an existing target directory with a new source directory."""
+    if try_git_remove(root, target):
+        if not try_git_mv(root, source, target):
+            shutil.move(str(source), str(target))
+        return
+
+    shutil.rmtree(target)
+    shutil.move(str(source), str(target))
+
+
 def fingerprint(path: Path) -> list[tuple[str, str]]:
     """Return a deterministic hash list for all files in a directory."""
     items: list[tuple[str, str]] = []
@@ -250,6 +265,21 @@ def fingerprint(path: Path) -> list[tuple[str, str]]:
             digest = hashlib.sha256(file_path.read_bytes()).hexdigest()
             items.append((file_path.relative_to(path).as_posix(), digest))
     return items
+
+
+def try_git_remove(root: Path, target: Path) -> bool:
+    """Try `git rm -r` and return whether it succeeded."""
+    command = [
+        "git",
+        "-c",
+        f"safe.directory={root}",
+        "rm",
+        "-r",
+        "--",
+        to_rel(root, target),
+    ]
+    result = subprocess.run(command, cwd=root, capture_output=True, text=True, check=False)
+    return result.returncode == 0
 
 
 def read_text(path: Path) -> str:
